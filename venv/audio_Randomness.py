@@ -4,18 +4,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import store_tbl_result
 
-
-col_name=[];indx_for_csv=[];
-def tbl_dot_result_win():
+wav_file = al.audio_load()
+signal = np.array(wav_file['signal']); fs = wav_file['fs']; fileName = wav_file['name'];
+#col_name=[];indx_for_csv=[];
+def tbl_dot_result_win(window_size):                                                #Window_size: 100 ms = (Win_size/FS)*1000 =(4410/44100)*1000
     crt_dynamic_var=globals() # crt_dynamic_var['window_{0}'.format(1)]=0
-    wav_file= al.audio_load()
-    signal=np.array(wav_file['signal']);  fs=wav_file['fs']; fileName=wav_file['name'];
+    # wav_file= al.audio_load()
+    # signal=np.array(wav_file['signal']);  fs=wav_file['fs']; fileName=wav_file['name'];
     # plt.plot(signal)
     # plt.show()
     signal_size=signal.size
     length=int(signal_size/fs)
-
-    window_size=1024*8 # (4410/44100)*1000: 100 ms window
+    #window_size=1024*win_multiplier_by #100 ms window = (Win_size/FS)*1000 =(4410/44100)*1000
     #calculated number of windows
     total_windows=int(signal_size/window_size)
     index_start=0
@@ -44,11 +44,17 @@ def tbl_dot_result_win():
         index_start=index_end
         index_end+=window_size
         #win_seg_count += 1
+    window_tbl=np.vstack((window_tbl,window_tbl.max(axis=0))); col_name.append('MAX') #Add MAXimum of padding columns
+    window_tbl = np.vstack((window_tbl, window_tbl.mean(axis=0)));col_name.append('AVG')  # Add Average of padding columns
     tbl_final=window_tbl
-    return tbl_final, indx_for_csv, col_name, fileName, window_size
+    return tbl_final, indx_for_csv, col_name, fileName
 
-csv_Data,indx_for_csv, col_name, fileName, window_size =tbl_dot_result_win()
-store_tbl_result.save_csv(csv_Data,indx_for_csv,col_name,window_size,fileName)
+##Finally call the DATA-Table; store into Excel File.
+def Data_Tbl_toSaveInExcel():
+    for win_multiplier_by in [1, 2, 4, 6, 8]:
+        window_size=1024 * win_multiplier_by
+        csv_Data,indx_for_csv, col_name, fileName=tbl_dot_result_win(window_size)
+        store_tbl_result.Save_InExcel(csv_Data,indx_for_csv,col_name,window_size,fileName)
 #print(tbl_dot_result_win())
 
 # t=np.arange(signal.size)/float(fs)
@@ -62,3 +68,4 @@ store_tbl_result.save_csv(csv_Data,indx_for_csv,col_name,window_size,fileName)
 # fs=waveFile.getframerate()
 # frames=waveFile.readframes()
 # waveFile.close()
+Data_Tbl_toSaveInExcel()

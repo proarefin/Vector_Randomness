@@ -8,12 +8,13 @@ import ntpath
 from pydub import AudioSegment
 import numpy as np
 import math as m
+import os
 
 def audio_load():
 
     message = 'Select audio file.';
     path = fileopenbox(message)
-    fileName=ntpath.basename(path)
+    fileName=ntpath.basename(os.path.splitext(path)[0])
     (fs, audiodata)=read(path)
     audiodata = audiodata.astype(float)
     signal =audiodata.sum(axis=1) / 2
@@ -33,22 +34,22 @@ def audio_load():
 
 #For analzing the data medium: is it at zero or shifted?
 #If the medium of the data is at zero then its a good music file to embed the text for Echo Hiding.
-    fig1=figure('firstchannel')
-    #plt.hist(audiodata[:,0], bins=201, range=[-100,+100]) #indibidual channel.
-    plt.hist(signal_ceil, bins=201, range=[-200, +200])  # indibidual channel.
-    #plt.show()
-    fig2=figure('Floor_channel')
-    plt.hist(signal_floor, bins=201, range=[-200,+200])
-#Analyzing the mono medium music.
-    fig2=figure('AVG_channel')
-    plt.hist(signal, bins=201, range=[-200,+200])
-    plt.show()
+#     fig1=figure('firstchannel')
+#     #plt.hist(audiodata[:,0], bins=201, range=[-100,+100]) #indibidual channel.
+#     plt.hist(signal_ceil, bins=201, range=[-200, +200])  # indibidual channel.
+#     #plt.show()
+#     fig2=figure('Floor_channel')
+#     plt.hist(signal_floor, bins=201, range=[-200,+200])
+# #Analyzing the mono medium music.
+#     fig2=figure('AVG_channel')
+#     plt.hist(signal, bins=201, range=[-200,+200])
+#     plt.show()
 
     # plt.plot(audiodata)
     # plt.show()
 
     return file
-file=audio_load()
+#file=audio_load()
 
 
 
