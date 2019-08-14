@@ -9,19 +9,23 @@ from pydub import AudioSegment
 import numpy as np
 import math as m
 import os
+import audio_Randomness as ad #data Store
 
-def audio_load():
+# message = 'Select audio file.';
+# path = fileopenbox(message)
 
-    message = 'Select audio file.';
-    path = fileopenbox(message)
+def audio_load(path):
+
+    # message = 'Select audio file.';
+    # path = fileopenbox(message)
     fileName=ntpath.basename(os.path.splitext(path)[0])
     (fs, audiodata)=read(path)
     audiodata = audiodata.astype(float)
     signal =audiodata.sum(axis=1) / 2
-    signal_ceil = np.ceil(audiodata.sum(axis=1) / 2)
-    signal_floor = np.floor(audiodata.sum(axis=1) / 2)
+    #signal_ceil = np.ceil(audiodata.sum(axis=1) / 2)
+    signal_floor = np.floor(signal)
     #signal = (audiodata[:, 0] + audiodata[:, 1]) / 2
-    file = {'fs': fs, 'signal': signal,'name': fileName}
+    file = {'fs': fs, 'signal': signal_floor,'name': fileName}
 
     sound = AudioSegment.from_wav(path)
     sound = sound.set_channels(1).get_array_of_samples()
@@ -51,6 +55,15 @@ def audio_load():
     return file
 #file=audio_load()
 
+def read_music_fileName():
+    message = 'Select audio file.';
+    path = fileopenbox(message)
+    dirName = os.path.dirname(path)
+    file_list = [entry for entry in os.scandir(dirName) if entry.is_file()]
+    #[entry for entry in os.scandir(os.getcwd()) if entry.is_file()]
+    for fl in file_list:
+        wav_file = audio_load(fl.path)
+        ad.Data_Tbl_toSaveInExcel(wav_file,dirName)
 
 
-
+read_music_fileName()

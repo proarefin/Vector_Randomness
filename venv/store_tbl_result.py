@@ -6,10 +6,11 @@ import os.path
 from openpyxl import load_workbook
 
 
-def Save_InExcel(data,indx_for_csv,col_name,win_size,fileName):
+def Save_InExcel(data,indx_for_csv,col_name,win_size,fileName,dirName):
     index=col_name                              #Row Names
     columns = indx_for_csv                      #column Names
-    path='instrument_'+ str(fileName) + '.xlsx'
+    dir=str(dirName)+'\\Data_inExcel\\'
+    path=str(dir)+'instrument_floor'+ str(fileName) + '.xlsx'
     df = pd.DataFrame(data,index,columns)
     #df.to_csv(r'tbl_window_Datafram.csv', index=True, header=col_name)
     if os.path.isfile(path):
@@ -21,11 +22,11 @@ def Save_InExcel(data,indx_for_csv,col_name,win_size,fileName):
         writer = pd.ExcelWriter(path, engine='openpyxl')
         writer.book = book
 
-        df.to_excel(writer, sheet_name='Win_Size'+str(win_size), engine='xlsxwriter')
+        df.to_excel(writer, sheet_name='Win_Size-'+str(win_size), engine='xlsxwriter')
         writer.save()
         writer.close()
     else:
-        df.to_excel(path, sheet_name='Win_Size'+str(win_size), engine='xlsxwriter') #single instrument's single music with different window size and padding.
+        df.to_excel(path, sheet_name='Win_Size-'+str(win_size), engine='xlsxwriter') #single instrument's single music with different window size and padding.
     # pd.concat(df).to_csv('tbl_window_Datafram.csv')
     #print(df)
 

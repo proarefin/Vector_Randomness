@@ -1,16 +1,17 @@
 
-import audio_load as al
+#import audio_load as al
 import matplotlib.pyplot as plt
 import numpy as np
 import store_tbl_result
 
-wav_file = al.audio_load()
-signal = np.array(wav_file['signal']); fs = wav_file['fs']; fileName = wav_file['name'];
-#col_name=[];indx_for_csv=[];
-def tbl_dot_result_win(window_size):                                                #Window_size: 100 ms = (Win_size/FS)*1000 =(4410/44100)*1000
+# wav_file = al.audio_load()
+# signal = np.array(wav_file['signal']); fs = wav_file['fs']; fileName = wav_file['name'];
+col_name=[];indx_for_csv=[];
+##Padded vector multilication
+def tbl_dot_result_win(window_size,wav_file):                                                #Window_size: 100 ms = (Win_size/FS)*1000 =(4410/44100)*1000
     crt_dynamic_var=globals() # crt_dynamic_var['window_{0}'.format(1)]=0
     # wav_file= al.audio_load()
-    # signal=np.array(wav_file['signal']);  fs=wav_file['fs']; fileName=wav_file['name'];
+    signal=np.array(wav_file['signal']);  fs=wav_file['fs']; fileName=wav_file['name'];
     # plt.plot(signal)
     # plt.show()
     signal_size=signal.size
@@ -50,11 +51,12 @@ def tbl_dot_result_win(window_size):                                            
     return tbl_final, indx_for_csv, col_name, fileName
 
 ##Finally call the DATA-Table; store into Excel File.
-def Data_Tbl_toSaveInExcel():
+def Data_Tbl_toSaveInExcel(wav_file,dirName):
+    col_name=[];indx_for_csv=[];
     for win_multiplier_by in [1, 2, 4, 6, 8]:
         window_size=1024 * win_multiplier_by
-        csv_Data,indx_for_csv, col_name, fileName=tbl_dot_result_win(window_size)
-        store_tbl_result.Save_InExcel(csv_Data,indx_for_csv,col_name,window_size,fileName)
+        csv_Data,indx_for_csv, col_name, fileName=tbl_dot_result_win(window_size,wav_file)
+        store_tbl_result.Save_InExcel(csv_Data,indx_for_csv,col_name,window_size,fileName,dirName)
 #print(tbl_dot_result_win())
 
 # t=np.arange(signal.size)/float(fs)
@@ -68,4 +70,5 @@ def Data_Tbl_toSaveInExcel():
 # fs=waveFile.getframerate()
 # frames=waveFile.readframes()
 # waveFile.close()
-Data_Tbl_toSaveInExcel()
+
+#Data_Tbl_toSaveInExcel(wav_file)
