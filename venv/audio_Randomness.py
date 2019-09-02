@@ -23,20 +23,25 @@ def tbl_dot_result_win(window_size,wav_file):                                   
     index_end=window_size
     #win_seg_count=0
     padding_value=10 #number of zero's
-    tbl_window_500=np.array([]); col_name=[];indx_for_csv=[];
-    stop_range=250; str_range=10; step_range=10; window_tbl=np.empty((0,2))
+    tbl_window_500=np.array([]); col_name=['MAX'];indx_for_Excel=[];
+    stop_range=250; str_range=0; step_range=10; window_tbl=np.empty((0,2))
     #for Each window segment.
     for count_win in range(total_windows): #(win_seg_count < total_windows-1):
         tbl_win_row=np.empty((0,1), float)
         window = signal[index_start:index_end]
         #tbl_window_row = np.array([])
-        indx_for_csv=[]; col_name.append('win_'+ str(count_win))
+        indx_for_Excel=[]; col_name.append('win_'+ str(count_win))
         for pad_val in range(str_range, stop_range, step_range):                    #loop: Padding values range; Ex: 10,20,30....100
-            bottom_padded_10=np.pad(window,(0,pad_val),'constant')                  #bottom-padded by 10 zeros
-            top_padded_10 = np.pad(window, (pad_val,0), 'constant')                 #top-padded by 10 zeros
-            vec_dotProduct_result=(top_padded_10 * bottom_padded_10).sum(axis=0);   #dot product calculation
-            tbl_win_row=np.append(tbl_win_row, vec_dotProduct_result)               #Creating A row-table
-            indx_for_csv.append(str(pad_val))
+            if pad_val > 0:
+                bottom_padded_10=np.pad(window,(0,pad_val),'constant')                  #bottom-padded by 10 zeros
+                top_padded_10 = np.pad(window, (pad_val,0), 'constant')                 #top-padded by 10 zeros
+                vec_dotProduct_result=(top_padded_10 * bottom_padded_10).sum(axis=0);   #dot product calculation
+                tbl_win_row=np.append(tbl_win_row, vec_dotProduct_result)               #Creating A row-table
+                indx_for_Excel.append(str(pad_val))
+            else:
+                vec_dotProduct_result=(window * window).sum(axis=0);   #dot product calculation
+                tbl_win_row=np.append(tbl_win_row, vec_dotProduct_result)
+                indx_for_Excel.append('NoPading')
         if window_tbl.size == 0:
             window_tbl=np.array(tbl_win_row)                                        #Table First row
         else:
@@ -45,10 +50,11 @@ def tbl_dot_result_win(window_size,wav_file):                                   
         index_start=index_end
         index_end+=window_size
         #win_seg_count += 1
-    window_tbl=np.vstack((window_tbl,window_tbl.max(axis=0))); col_name.append('MAX') #Add MAXimum of padding columns
-    window_tbl = np.vstack((window_tbl, window_tbl.mean(axis=0)));col_name.append('AVG')  # Add Average of padding columns
+    win_MAX_Row=window_tbl.max(axis=0);
+    window_tbl=np.vstack((window_tbl.max(axis=0),window_tbl)); #col_name.append('MAX') #Add MAXimum value on top
+    #window_tbl = np.vstack((window_tbl.mean(axis=0),window_tbl)); col_name.append('AVG')  # Add Average value on top
     tbl_final=window_tbl
-    return tbl_final, indx_for_csv, col_name, fileName
+    return tbl_final, indx_for_Excel, col_name, fileName
 
 ##Finally call the DATA-Table; store into Excel File.
 def Data_Tbl_toSaveInExcel(wav_file,dirName):

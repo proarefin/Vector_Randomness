@@ -15,12 +15,9 @@ import audio_Randomness as ad #data Store
 # path = fileopenbox(message)
 
 def audio_load(path):
-
-    # message = 'Select audio file.';
-    # path = fileopenbox(message)
     fileName=ntpath.basename(os.path.splitext(path)[0])
-    (fs, audiodata)=read(path)
-    audiodata = audiodata.astype(float)
+    (fs, data)=read(path)
+    audiodata = data.astype(float)
     signal =audiodata.sum(axis=1) / 2
     #signal_ceil = np.ceil(audiodata.sum(axis=1) / 2)
     signal_floor = np.floor(signal)
@@ -38,23 +35,32 @@ def audio_load(path):
 
 #For analzing the data medium: is it at zero or shifted?
 #If the medium of the data is at zero then its a good music file to embed the text for Echo Hiding.
-#     fig1=figure('firstchannel')
-#     #plt.hist(audiodata[:,0], bins=201, range=[-100,+100]) #indibidual channel.
-#     plt.hist(signal_ceil, bins=201, range=[-200, +200])  # indibidual channel.
-#     #plt.show()
-#     fig2=figure('Floor_channel')
-#     plt.hist(signal_floor, bins=201, range=[-200,+200])
+    fig1=figure('Left_channel')
+     #plt.hist(audiodata[:,0], bins=201, range=[-100,+100]) #indibidual channel.
+    img_Dir=os.path.dirname(path)+'\\Data_inExcel\\' + fileName ;
+    plt.hist(data[:,0], bins=301,density=True)  # indibidual channel. #bin: Catagories/group/intervel/elements/occerances of a non-overlapperd range.
+    plt.savefig(img_Dir + '_1st_channel.png')
+    #plt.show()
+
+    fig2=plt.figure('Avg_channel')
+    plt.hist(signal_floor,bins=301,density=True,)
+    fig2.savefig(img_Dir + '_Avg_ch.png', dpi=fig2.dpi)
+    # plt.show()
+
 # #Analyzing the mono medium music.
-#     fig2=figure('AVG_channel')
-#     plt.hist(signal, bins=201, range=[-200,+200])
+#     fig2=figure('Right_channel')
+#     plt.hist(data[:,1], bins=201, range=[-200,+200])
 #     plt.show()
 
     # plt.plot(audiodata)
     # plt.show()
 
     return file
-#file=audio_load()
+# message = 'Select audio file.';
+# path = fileopenbox(message)
+# file=audio_load(path)
 
+## program start from this function
 def read_music_fileName():
     message = 'Select audio file.';
     path = fileopenbox(message)
