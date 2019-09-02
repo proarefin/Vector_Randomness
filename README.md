@@ -1,4 +1,2 @@
 # Vector_Randomness
-Check a vector randomness by adding some padding value on top. 
-Create another vetor by adding same amount of padding on bottom.
-Apply dot product of those two vectors.
+Its a tool to analysis the Digital Audio files for Watermaking and Steganography suitable cover work. A audio file has benn splitet in multiple windows with same size. we assuming each wondow as a vector and multiply its upper padded version with it's lower padded version. All windows will be padded by a given list of padding nr. like 10, 20, 30.... Finally, results has been stored in a excel files for further analysis. This tool uses the Python for implimentaion and results are strored in excel files.
